@@ -1,10 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # ============ IMPORT DATA FROM .CSV FILE ============
 
 def impt(path: str,skip: int=1):      #path is a file path in quotes, skip is the number of rows to skip at the top
     return np.transpose(np.genfromtxt(path, delimiter=',', skip_header=skip)) 
+
+""" This is an alternative to importing data, but using pandas
+def impt(path: str, skip: int = 0): 
+    df = pd.read_csv(path, skiprows=skip)
+    df.columns = df.columns.str.strip()
+    return df
+"""
 
 # ========= REMOVE NAN VALUES FROM AN ARRAY ==========
 
@@ -23,7 +31,49 @@ def weighted_mean(list):        #takes a list of ordered pairs of the form (mean
     avg = avg/sigma2
     return avg, 1/(sigma2)**0.5
 
+# ================= CHI-SQUARE FUNCTIONS ============
+def chi-square(y_obs, y_exp, yerr): # Calculates the chi-square
+    y_obs = np.asarray(y_obs, dtype=float)
+    y_exp = np.asarray(y_exp, dtype=float)
+    yerr = np.asarray(yerr, dtype=float)
+    mask = (~np.isnan(y_obs)) & (~np.isnan(y_exp)) & (~np.isnan(yerr)) & (yerr > 0)
+    y_obs = y_obs[mask]
+    y_exp = y_exp[mask]
+    yerr = yerr [mask]
+    return np.sum(((y_obs, y_exp)/ yerr)**2
+
+def red_chi_square(y_obs, y_exp, yerr, n_params): # Calculates the reduced chi-square 
+    y_obs = np.assaray(y_obs, dtype=float)
+    y_exp = np.asarray(y_exp, dtype=float)
+    yerr = np.asarray(yerr,dtype=float)
+    mask = (~np.isnan(y_obs)) & (~np.isnan(y_exp)) & (~np.isnan(yerr)) & (yerr > 0)
+    N = np.sum(mask)
+    dof = N - n_params
+    if dof <= 0:
+        return np.nan
+    chi2 = chi_square(y_obs, y_exp, yerr)
+    return chi2/dof
+    
+def residuals(y_obs, y_exp): # Returns residuals: observed - expected
+    y_obs = np.asarray (y_obs, dtype=float)
+    y_exp = np.asarray (y_exp, dtype=float)
+    return y_obs - y_exp 
+    
 # ================ QUICKLY PLOT DATA =================
+
+# For the plots, I normally use a colour palette and change it as desired.
+# For some time, I have not liked the auto-generated colours of Python
+# Though we don't have to apply it 
+Color_palette = {     
+    "Data1":"#84A7BD"
+    "Data2": "#84A7BD"
+    "Data1_fit": "#C4AD9D"
+    "Data2_fit": "#C4AD9D"
+    "residuals":"#445D48"
+    "zero_line": "#E2AFA2"
+    "noise":"#91C69F"
+    "grid": "ECF8FD" 
+} # Colours can be changed accordingly 
 
 def fastplot(xdata: None | list | np.typing.NDArray=None,
               ydata: None | list | np.typing.NDArray=None,
